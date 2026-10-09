@@ -106,8 +106,8 @@ export default function ComplaintsBoard({
   if (!open) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-end justify-end p-3" role="dialog" aria-modal="true" aria-label="Complaints board">
-      <div className="absolute inset-0 bg-black/40" onClick={onClose} />
+    <div className="fixed inset-0 z-50 flex items-end justify-end p-2 sm:p-3" role="dialog" aria-modal="true" aria-label="Complaints board">
+      <div className="absolute inset-0 bg-black/50 backdrop-blur-xs" onClick={onClose} />
       <div className="relative z-10 flex h-[82vh] w-full max-w-md flex-col rounded-lg border border-[#1a1a1a] bg-[#0a0a0a]/97 shadow-2xl backdrop-blur-xl">
         <div className="flex items-center gap-2 border-b border-border p-3">
           <div className="flex h-7 w-7 items-center justify-center rounded border border-data/40 bg-data/10">
@@ -148,7 +148,7 @@ export default function ComplaintsBoard({
           ))}
         </div>
 
-        <div className="flex-1 space-y-2 overflow-y-auto p-3">
+        <div className="flex-1 space-y-2 overflow-y-auto p-3 no-scrollbar">
           {visible.length === 0 && (
             <div className="px-2 py-10 text-center text-xs text-[#8a8a8a]">Nothing here. Try another filter.</div>
           )}

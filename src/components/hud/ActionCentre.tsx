@@ -24,7 +24,7 @@ export default function ActionCentre({ onFocusBuilding }: { onFocusBuilding: (id
   const open = recommendations.filter((r) => r.status === 'open').slice(0, 3);
 
   return (
-    <div className="pointer-events-auto w-80">
+    <div className="pointer-events-auto w-full">
       <div className="hud-panel hud-corner">
         <button
           onClick={() => setCollapsed(!collapsed)}

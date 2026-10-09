@@ -101,7 +101,7 @@ export default function SustainabilityPage() {
   };
 
   return (
-    <div className="min-h-full bg-[#000000] p-4 md:p-6">
+    <div className="h-full overflow-y-auto bg-[#000000] p-4 md:p-6">
       <div className="mx-auto max-w-6xl">
         <div className="mb-4 flex flex-wrap items-center gap-3">
           <div>
@@ -116,9 +116,6 @@ export default function SustainabilityPage() {
             </Button>
             <Button variant="default" size="sm" onClick={exportCsv}>
               <Download size={13} /> Export CSV
-            </Button>
-            <Button variant="ghost" size="sm" asChild>
-              <Link to="/">Back to HUD</Link>
             </Button>
           </div>
         </div>

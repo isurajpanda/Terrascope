@@ -101,7 +101,7 @@ export default function ReportPage() {
 
   if (submitted) {
     return (
-      <div className="flex min-h-full flex-col bg-[#000000] p-4">
+      <div className="flex h-full overflow-y-auto no-scrollbar flex-col bg-[#000000] p-4">
         <div className="mx-auto flex w-full max-w-md flex-1 flex-col items-center justify-center text-center">
           <CheckCircle2 size={48} className="text-ok" />
           <h1 className="mt-3 font-display text-lg font-bold tracking-wider text-[#fafafa]">Report received</h1>
@@ -130,7 +130,7 @@ export default function ReportPage() {
   }
 
   return (
-    <div className="flex min-h-full flex-col bg-[#000000]">
+    <div className="flex h-full overflow-y-auto flex-col bg-[#000000]">
       <header className="border-b border-[#1a1a1a] bg-[#0a0a0a]/90 p-4">
         <div className="mx-auto flex max-w-md items-center gap-2">
           <h1 className="font-display text-base font-bold tracking-wider text-[#fafafa]">Report an issue</h1>

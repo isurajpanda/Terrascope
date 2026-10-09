@@ -25,7 +25,7 @@ export default function AlertFeed({ onAlertClick }: { onAlertClick: (buildingId:
   const displayAlerts = alerts.slice(0, 5);
 
   return (
-    <div className="pointer-events-auto w-72">
+    <div className="pointer-events-auto w-full">
       <div className="hud-panel hud-corner">
         <button
           onClick={() => setCollapsed(!collapsed)}

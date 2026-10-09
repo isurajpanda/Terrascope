@@ -144,7 +144,7 @@ export default function OpsPage() {
   };
 
   return (
-    <div className="min-h-full bg-[#000000] p-4 text-foreground">
+    <div className="h-full overflow-y-auto bg-[#000000] p-4 text-foreground">
       <header className="mb-4 flex flex-wrap items-center justify-between gap-3">
         <div>
           <h1 className="font-hud text-xl font-bold uppercase tracking-[0.2em] text-[#fafafa]">

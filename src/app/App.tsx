@@ -20,6 +20,8 @@ const ROLE_LANDING: Record<string, string> = {
   reporter: '/report',
 };
 
+import AppLayout from '@/components/layout/AppLayout';
+
 export default function App() {
   const siteId = useSettingsStore((s) => s.siteId);
   const role = useSettingsStore((s) => s.role);
@@ -42,7 +44,7 @@ export default function App() {
   }, [initialized, running, speed, tick]);
 
   return (
-    <div className="flex h-full flex-col">
+    <AppLayout>
       <Routes>
         <Route path="/" element={<CommandPage />} />
         <Route path="/ops" element={<OpsPage />} />
@@ -53,6 +55,6 @@ export default function App() {
         <Route path="*" element={<Navigate to={ROLE_LANDING[role] ?? '/'} replace />} />
       </Routes>
       <Toaster />
-    </div>
+    </AppLayout>
   );
 }

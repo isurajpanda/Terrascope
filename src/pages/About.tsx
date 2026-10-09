@@ -1,4 +1,4 @@
-import { Link } from 'react-router-dom';
+
 import { ShieldCheck, Cpu, Database, Eye, Lock, AlertTriangle } from 'lucide-react';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -38,7 +38,7 @@ const SECTIONS = [
 
 export default function AboutPage() {
   return (
-    <div className="min-h-full bg-[#000000] p-4 md:p-6">
+    <div className="h-full overflow-y-auto bg-[#000000] p-4 md:p-6">
       <div className="mx-auto max-w-3xl">
         <div className="mb-4 flex items-center gap-3">
           <div>
@@ -81,11 +81,6 @@ export default function AboutPage() {
           </CardContent>
         </Card>
 
-        <footer className="mt-6 text-center">
-          <Link to="/" className="text-xs text-data underline">
-            Back to HUD
-          </Link>
-        </footer>
       </div>
     </div>
   );

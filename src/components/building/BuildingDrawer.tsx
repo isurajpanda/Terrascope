@@ -76,7 +76,7 @@ export default function BuildingDrawer({
         </div>
         <SheetClose onClose={onClose} />
       </SheetHeader>
-      <div className="flex-1 overflow-y-auto p-4">
+      <div className="flex-1 overflow-y-auto p-4 no-scrollbar">
         {buildingAlerts.length > 0 && (
           <div className="mb-3 flex flex-col gap-2">
             {buildingAlerts.map((a) => (

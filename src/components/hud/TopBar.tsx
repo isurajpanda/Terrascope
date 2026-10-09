@@ -1,6 +1,23 @@
 import { useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
-import { Radar, Users, Wind, Trash2, Car, Zap, ChevronDown, ChevronUp, Bell, ClipboardList, AlertOctagon, AlertTriangle, Info } from 'lucide-react';
+import { useNavigate, useLocation } from 'react-router-dom';
+import {
+  Users,
+  Wind,
+  Trash2,
+  Car,
+  Zap,
+  ChevronDown,
+  ChevronUp,
+  Bell,
+  ClipboardList,
+  AlertOctagon,
+  AlertTriangle,
+  Info,
+  SlidersHorizontal,
+  PanelLeft,
+  Menu,
+} from 'lucide-react';
 import { useSettingsStore } from '@/store/useSettingsStore';
 import { useSimStore } from '@/store/useSimStore';
 import { SITES } from '@/config/sites';
@@ -13,6 +30,13 @@ import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
 import ComplaintsBoard from '@/components/hud/ComplaintsBoard';
 import type { Role, Severity } from '@/types/domain';
+
+export const ROLE_LANDING: Record<Role, string> = {
+  admin: '/',
+  operations: '/ops',
+  sustainability: '/sustainability',
+  reporter: '/report',
+};
 
 const SEV_DOT: Record<Severity, string> = {
   critical: 'bg-crit',
@@ -58,10 +82,19 @@ function CountUp({ value, className }: { value: number; className?: string }) {
   return <span className={cn('tnum', className)}>{display.toLocaleString()}</span>;
 }
 
-export default function TopBar({ onFocusBuilding }: { onFocusBuilding?: (buildingId: string) => void }) {
-  const { siteId, setSiteId, role, setRole } = useSettingsStore();
+interface TopBarProps {
+  onFocusBuilding?: (buildingId: string) => void;
+  rightOpen?: boolean;
+  onToggleRight?: () => void;
+}
+
+export default function TopBar({ onFocusBuilding, rightOpen, onToggleRight }: TopBarProps) {
+  const navigate = useNavigate();
+  const location = useLocation();
+  const { siteId, setSiteId, role, setRole, sidebarCollapsed, toggleSidebar, toggleMobileSidebar } = useSettingsStore();
   const kpis = useSimStore((s) => s.kpis);
   const alerts = useSimStore((s) => s.alerts);
+  const site = SITES.find((s) => s.id === siteId) ?? SITES[0];
   const [kpiCollapsed, setKpiCollapsed] = useState(false);
   const [notifOpen, setNotifOpen] = useState(false);
   const [boardOpen, setBoardOpen] = useState(false);
@@ -99,25 +132,47 @@ export default function TopBar({ onFocusBuilding }: { onFocusBuilding?: (buildin
   ];
 
   return (
-    <header className="pointer-events-auto relative z-40 flex h-14 items-center gap-3 border-b border-[#1a1a1a] bg-[#0a0a0a]/90 px-4 backdrop-blur-md">
+    <header className="pointer-events-auto relative z-30 flex h-14 items-center gap-2 sm:gap-3 border-b border-[#1a1a1a] bg-[#0a0a0a]/95 px-3 sm:px-4 backdrop-blur-md">
       <div className="flex items-center gap-2">
-        <div className="flex h-8 w-8 items-center justify-center rounded border border-[#333] bg-[#111]">
-          <Radar size={16} className="text-[#fafafa]" />
-        </div>
-        <div>
-          <div className="font-display text-sm font-bold tracking-widest text-[#fafafa]">TERRASCOPE</div>
-          <div className="font-hud text-[9px] uppercase tracking-[0.2em] text-[#8a8a8a]">Estate Intelligence</div>
+        {/* Mobile menu drawer trigger (< md) */}
+        <button
+          onClick={toggleMobileSidebar}
+          aria-label="Open navigation menu"
+          title="Open navigation menu"
+          className="flex md:hidden h-8 w-8 items-center justify-center rounded border border-[#222] bg-[#111] text-[#8a8a8a] hover:text-[#fafafa] transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+        >
+          <Menu size={16} />
+        </button>
+
+        {/* Desktop sidebar expand trigger (when collapsed on >= md) */}
+        {sidebarCollapsed && (
+          <button
+            onClick={toggleSidebar}
+            aria-label="Expand sidebar (Ctrl+B)"
+            title="Expand sidebar (Ctrl+B)"
+            className="hidden md:flex h-8 w-8 items-center justify-center rounded border border-[#222] bg-[#111] text-[#8a8a8a] hover:text-[#fafafa] transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+          >
+            <PanelLeft size={15} />
+          </button>
+        )}
+        <div className="hidden sm:flex flex-col">
+          <div className="font-display text-xs font-bold tracking-wider text-[#fafafa] uppercase truncate max-w-[180px] xl:max-w-[240px]">
+            {site.name}
+          </div>
+          <div className="font-hud text-[9px] uppercase tracking-[0.18em] text-[#8a8a8a]">
+            {location.pathname === '/' ? 'Campus Command HUD' : 'Telemetry Live Console'}
+          </div>
         </div>
       </div>
 
-      <div className="mx-2 h-6 w-px bg-[#1a1a1a]" />
+      <div className="hidden sm:block mx-1 h-6 w-px bg-[#1a1a1a]" />
 
       <Select
         ariaLabel="Site"
         value={siteId}
         onValueChange={setSiteId}
         options={SITES.map((s) => ({ value: s.id, label: s.shortName }))}
-        className="h-8 w-36 text-xs"
+        className="h-8 w-28 sm:w-36 text-xs"
       />
 
       <DropdownMenu
@@ -126,20 +181,30 @@ export default function TopBar({ onFocusBuilding }: { onFocusBuilding?: (buildin
             <Avatar className="h-5 w-5 text-[10px]">
               {role[0]?.toUpperCase()}
             </Avatar>
-            {ROLES.find((r) => r.value === role)?.label}
+            <span className="hidden md:inline">{ROLES.find((r) => r.value === role)?.label}</span>
           </Button>
         }
       >
         {ROLES.map((r) => (
-          <DropdownMenuItem key={r.value} onSelect={() => setRole(r.value)}>
-            {r.label}
+          <DropdownMenuItem
+            key={r.value}
+            onSelect={() => {
+              setRole(r.value);
+              const dest = ROLE_LANDING[r.value];
+              if (dest && location.pathname !== dest) navigate(dest);
+            }}
+          >
+            <div className="flex items-center justify-between w-full gap-2">
+              <span>{r.label}</span>
+              {role === r.value && <span className="font-hud text-[10px] text-data">Active</span>}
+            </div>
           </DropdownMenuItem>
         ))}
       </DropdownMenu>
 
-      <div className="mx-2 h-6 w-px bg-[#1a1a1a]" />
+      <div className="hidden lg:block mx-1 h-6 w-px bg-[#1a1a1a]" />
 
-      <div className="flex items-center gap-1">
+      <div className="hidden lg:flex items-center gap-1">
         <button
           onClick={() => setKpiCollapsed(!kpiCollapsed)}
           className="flex h-7 items-center gap-1 rounded px-2 font-hud text-[10px] font-bold uppercase tracking-wider text-[#8a8a8a] hover:text-[#fafafa]"
@@ -148,11 +213,11 @@ export default function TopBar({ onFocusBuilding }: { onFocusBuilding?: (buildin
           {kpiCollapsed ? <ChevronDown size={12} /> : <ChevronUp size={12} />}
         </button>
         {!kpiCollapsed && (
-          <div className="flex items-center gap-1">
+          <div className="flex items-center gap-1 overflow-x-auto no-scrollbar max-w-[30vw]">
             {kpiItems.map(({ icon: Icon, label, value, suffix, color }) => (
               <div
                 key={label}
-                className="flex items-center gap-1.5 rounded border border-[#1a1a1a] bg-[#0a0a0a] px-2 py-1"
+                className="flex items-center gap-1.5 rounded border border-[#1a1a1a] bg-[#0a0a0a] px-2 py-1 shrink-0"
                 title={label}
               >
                 <Icon size={13} className={color} />
@@ -262,6 +327,27 @@ export default function TopBar({ onFocusBuilding }: { onFocusBuilding?: (buildin
         >
           <ClipboardList size={14} />
         </Button>
+
+        {onToggleRight && (
+          <Button
+            variant={rightOpen ? 'default' : 'outline'}
+            size="sm"
+            onClick={onToggleRight}
+            className="h-8 gap-1.5 text-xs font-hud font-semibold uppercase tracking-wider"
+            title={rightOpen ? 'Hide Alerts & Actions panel' : 'Show Alerts & Actions panel'}
+          >
+            <SlidersHorizontal size={13} />
+            <span className="hidden lg:inline">Alerts & Actions</span>
+            {alerts.length > 0 && (
+              <Badge
+                variant={alerts.some((a) => a.severity === 'critical') ? 'destructive' : 'warning'}
+                className="ml-0.5 h-4 px-1 text-[9px]"
+              >
+                {alerts.length}
+              </Badge>
+            )}
+          </Button>
+        )}
       </div>
 
       {boardOpen &&

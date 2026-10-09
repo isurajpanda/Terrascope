@@ -90,9 +90,9 @@ export default function ChatPanel({ open, onClose }: { open: boolean; onClose: (
   if (!open) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-end justify-end p-3" role="dialog" aria-modal="true" aria-label="Chat with Terrascope">
-      <div className="absolute inset-0 bg-black/40" onClick={onClose} />
-      <div className="relative z-10 flex h-[70vh] w-full max-w-md flex-col rounded-lg border border-[#1a1a1a] bg-[#0a0a0a]/97 shadow-2xl backdrop-blur-xl">
+    <div className="fixed inset-0 z-60 flex items-end justify-end p-2 sm:p-3" role="dialog" aria-modal="true" aria-label="Chat with Terrascope">
+      <div className="absolute inset-0 bg-black/50 backdrop-blur-xs" onClick={onClose} />
+      <div className="relative z-10 flex h-[75vh] sm:h-[70vh] w-full max-w-md flex-col rounded-lg border border-[#1a1a1a] bg-[#0a0a0a]/97 shadow-2xl backdrop-blur-xl">
         <div className="flex items-center gap-2 border-b border-border p-3">
           <div className="flex h-7 w-7 items-center justify-center rounded border border-data/40 bg-data/10">
             <Bot size={14} className="text-data" />
@@ -114,7 +114,7 @@ export default function ChatPanel({ open, onClose }: { open: boolean; onClose: (
           </button>
         </div>
 
-        <div ref={scrollRef} className="flex-1 space-y-3 overflow-y-auto p-3">
+        <div ref={scrollRef} className="flex-1 space-y-3 overflow-y-auto p-3 no-scrollbar">
           {messages.map((m) => (
             <div key={m.id} className={cn('flex gap-2', m.role === 'user' && 'flex-row-reverse')}>
               <div

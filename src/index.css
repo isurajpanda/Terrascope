@@ -103,6 +103,36 @@
   }
 }
 
+/* Custom Sleek Dark HUD Scrollbars (no default browser grey track) */
+::-webkit-scrollbar {
+  width: 5px;
+  height: 5px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: #222222;
+  border-radius: 9999px;
+  transition: background 0.2s ease;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #3d8bff;
+}
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #222222 transparent;
+}
+
+/* Utility to hide scrollbar while preserving scrollability */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
 .maplibregl-ctrl-attrib {
   font-size: 9px !important;
   opacity: 0.7;
