@@ -247,7 +247,7 @@ const BuildingMesh = memo(function BuildingMesh({
         </group>
       )}
       {!hidden && (
-        <Html position={[frame.cx, h + 14, frame.cz]} center distanceFactor={500} zIndexRange={[35, 0]} style={{ pointerEvents: 'none' }}>
+        <Html position={[frame.cx, h + 14, frame.cz]} center distanceFactor={500} zIndexRange={[15, 0]} style={{ pointerEvents: 'none' }}>
           <div
             className="rounded border border-[#1a1a1a] bg-black/70 px-1.5 py-0.5 text-center font-hud text-[9px] font-bold uppercase tracking-wider whitespace-nowrap"
             style={{ color: STATUS_COLOR[status] }}

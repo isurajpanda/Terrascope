@@ -246,7 +246,7 @@ export default function CommandPage() {
                         </div>
                       )}
                       <Tabs defaultValue="overview">
-                        <TabsList className="w-full flex-wrap gap-1 rounded-md border border-border bg-[#0a0a0a] p-1">
+                        <TabsList className="w-full flex flex-wrap gap-1 rounded-md border border-border bg-[#0a0a0a] p-1 h-auto min-h-9">
                           <TabsTrigger value="overview" className="flex-1">Overview</TabsTrigger>
                           {building.sensors.map((s) => (
                             <TabsTrigger key={s.id} value={s.id} className="flex-1">
