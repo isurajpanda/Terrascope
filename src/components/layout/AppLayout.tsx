@@ -13,7 +13,7 @@ export default function AppLayout({ children }: AppLayoutProps) {
   const setMobileSidebarOpen = useSettingsStore((s) => s.setMobileSidebarOpen);
 
   return (
-    <div className="flex h-screen w-screen overflow-hidden bg-black text-foreground antialiased selection:bg-data/30 selection:text-white">
+    <div className="flex h-dvh w-screen overflow-hidden bg-black text-foreground antialiased selection:bg-data/30 selection:text-white">
       {/* Mobile Backdrop Overlay */}
       {mobileSidebarOpen && (
         <div

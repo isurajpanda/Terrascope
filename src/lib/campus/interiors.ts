@@ -135,7 +135,8 @@ export function buildInterior(b: Building, ctx: InteriorContext): FloorPlan[] {
     const rooms: Room[] = [];
     for (let r = 0; r < roomsPerFloor; r++, ri++) {
       const id = `${b.id}-f${f}-r${r}`;
-      const rrand = mulberry32(hashStr(id));
+      const idHash = hashStr(id);
+      const rrand = mulberry32(idHash);
       const share = weights[ri] / wSum;
       const occupancy = Math.max(0, Math.round(ctx.occupancy * share + (rrand() < 0.3 ? 1 : 0)));
       const tempC = Math.round((ctx.tempC + (rrand() * 3 - 1.5)) * 10) / 10;
@@ -143,8 +144,8 @@ export function buildInterior(b: Building, ctx: InteriorContext): FloorPlan[] {
       const energyKw = Math.round(ctx.energyKw * share * 10) / 10;
 
       let status: ElementStatus = 'ok';
-      if (hasCritical && hashStr(id) % 5 === 0) status = 'critical';
-      else if (hasWarning && hashStr(id) % 4 === 0) status = 'warning';
+      if (hasCritical && idHash % 5 === 0) status = 'critical';
+      else if (hasWarning && idHash % 4 === 0) status = 'warning';
       if (b.capacity > 0 && occupancy > roomCap) status = worst(status, 'warning');
 
       const tempStatus: ElementStatus = tempC > 34 ? 'critical' : tempC > 30 ? 'warning' : 'ok';
@@ -154,7 +155,7 @@ export function buildInterior(b: Building, ctx: InteriorContext): FloorPlan[] {
       status = worst(status, worst(tempStatus, worst(pmStatus, occStatus)));
 
       const elements: RoomElement[] = [
-        { id: `${id}-light`, label: 'Lighting', value: occupancy > 0 || new Date().getHours() >= 6 && new Date().getHours() < 22 ? 'ON' : 'OFF', status: 'ok' },
+        { id: `${id}-light`, label: 'Lighting', value: occupancy > 0 || (() => { const hour = new Date().getHours(); return hour >= 6 && hour < 22; })() ? 'ON' : 'OFF', status: 'ok' },
         { id: `${id}-hvac`, label: 'HVAC', value: `${tempC.toFixed(1)}°C · ${tempC > 26 ? 'cooling' : 'idle'}`, status: tempStatus },
         { id: `${id}-occ`, label: 'Occupancy', value: `${occupancy}/${roomCap} people`, status: occStatus },
         { id: `${id}-air`, label: 'PM2.5', value: `${pm25} µg/m³`, status: pmStatus },

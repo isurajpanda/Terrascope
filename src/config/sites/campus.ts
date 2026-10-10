@@ -88,10 +88,10 @@ export function createCampusSite(center: LngLat): SiteConfig {
     shortName: 'Greenfield',
     type: 'campus',
     center,
-    plusCode: 'Greenfield Institute of Technology',
-    address: 'Greenfield Institute of Technology',
+    plusCode: 'Greenfield Institute of Technology, London',
+    address: 'Greenfield Institute of Technology, London',
     mapStyle: CAMPUS_STYLE,
-    mapAttribution: 'Greenfield Institute of Technology',
+    mapAttribution: 'Terrascope demo data',
     buildings: [
       b(center, 'academic-a', 'Academic Block A', 'Block A', 'academic', 0, 80, 120, 50, 24, 1800),
       b(center, 'academic-b', 'Academic Block B', 'Block B', 'academic', 0, -40, 110, 48, 22, 1500),
@@ -214,5 +214,5 @@ export function createCampusSite(center: LngLat): SiteConfig {
 }
 
 export function createDefaultCampusSite(): SiteConfig {
-  return createCampusSite({ lng: 0, lat: 0 });
+  return createCampusSite({ lng: -0.1276, lat: 51.5072 });
 }

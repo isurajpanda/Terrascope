@@ -90,10 +90,9 @@ export default function LocationPicker({ onEnter }: LocationPickerProps) {
         </span>
       </div>
 
-      <div
-        className="pointer-events-none absolute bottom-1 right-1 z-10 max-w-[65%] text-right text-[9px] leading-tight text-slate-400/80"
-        dangerouslySetInnerHTML={{ __html: '&copy; OpenStreetMap contributors &copy; CARTO' }}
-      />
+      <div className="pointer-events-none absolute bottom-1 right-1 z-10 max-w-[65%] text-right text-[9px] leading-tight text-slate-400/80">
+        &copy; OpenStreetMap contributors &copy; CARTO
+      </div>
 
       <style>{`
         @keyframes pulse-ring {

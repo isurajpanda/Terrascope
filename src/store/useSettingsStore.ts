@@ -2,7 +2,7 @@ import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import type { LayerKey, LngLat, Role } from '@/types/domain';
 
-const NEW_YORK_CENTER: LngLat = { lng: -73.9857, lat: 40.7484 };
+const LONDON_CENTER: LngLat = { lng: -0.1276, lat: 51.5072 };
 
 interface SettingsState {
   role: Role;
@@ -44,7 +44,7 @@ export const useSettingsStore = create<SettingsState>()(
       weights: { air: 0.2, waste: 0.15, energy: 0.2, water: 0.15, mobility: 0.15, resilience: 0.15 },
       sidebarCollapsed: false,
       mobileSidebarOpen: false,
-      mapCenter: NEW_YORK_CENTER,
+      mapCenter: LONDON_CENTER,
       setRole: (role) => set({ role }),
       setSiteId: (siteId) => set({ siteId }),
       setDayNight: (dayNight) => set({ dayNight }),

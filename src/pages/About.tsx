@@ -1,7 +1,9 @@
 
-import { ShieldCheck, Cpu, Database, Eye, Lock, AlertTriangle } from 'lucide-react';
+import { ShieldCheck, Cpu, Database, Eye, Lock, AlertTriangle, ArrowLeft } from 'lucide-react';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Link } from 'react-router-dom';
 
 const SECTIONS = [
   {
@@ -41,6 +43,12 @@ export default function AboutPage() {
     <div className="h-full overflow-y-auto bg-[#000000] p-4 md:p-6">
       <div className="mx-auto max-w-3xl">
         <div className="mb-4 flex items-center gap-3">
+          <Button variant="ghost" size="sm" className="gap-1" asChild>
+            <Link to="/">
+              <ArrowLeft size={12} />
+              Back
+            </Link>
+          </Button>
           <div>
             <h1 className="font-display text-xl font-bold tracking-wider text-[#fafafa]">
               Assumptions & Method

@@ -1,5 +1,6 @@
 import { useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
+import { ArrowLeft } from 'lucide-react';
 import {
   Trash2,
   Droplets,
@@ -70,6 +71,10 @@ export default function ReportPage() {
   const onPhoto = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
+    if (file.size > 5 * 1024 * 1024) {
+      toast({ title: 'File too large', description: 'Please select an image under 5 MB.', variant: 'error' });
+      return;
+    }
     const reader = new FileReader();
     reader.onload = () => setPhotoPreview(reader.result as string);
     reader.readAsDataURL(file);
@@ -133,6 +138,12 @@ export default function ReportPage() {
     <div className="flex h-full overflow-y-auto flex-col bg-[#000000]">
       <header className="border-b border-[#1a1a1a] bg-[#0a0a0a]/90 p-4">
         <div className="mx-auto flex max-w-md items-center gap-2">
+          <Button variant="ghost" size="sm" className="gap-1" asChild>
+            <Link to="/">
+              <ArrowLeft size={12} />
+              Back
+            </Link>
+          </Button>
           <h1 className="font-display text-base font-bold tracking-wider text-[#fafafa]">Report an issue</h1>
           <Badge variant="ok" className="ml-auto">
             Anonymous

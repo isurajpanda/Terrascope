@@ -34,6 +34,7 @@ export function polygonFromRect(
 }
 
 export function centroid(points: LngLat[]): LngLat {
+  if (points.length === 0) return { lng: 0, lat: 0 };
   const n = points.length;
   const sum = points.reduce((acc, p) => ({ lng: acc.lng + p.lng, lat: acc.lat + p.lat }), {
     lng: 0,

@@ -371,16 +371,14 @@ function CampusMap({ onBuildingClick, focusBuildingId, focusTrigger, autoOrbit }
 
       <button
         onClick={resetView}
-        className="absolute right-2.5 z-10 rounded border border-[#1a1a1a] bg-[#0a0a0a]/90 px-2 py-1 text-[10px] font-semibold uppercase tracking-[0.14em] text-[#8a8a8a] backdrop-blur-md transition-colors hover:text-[#fafafa]"
-        style={{ top: 104 }}
+        className="absolute right-2.5 top-24 z-10 rounded border border-[#1a1a1a] bg-[#0a0a0a]/90 px-2 py-1 text-[10px] font-semibold uppercase tracking-[0.14em] text-[#8a8a8a] backdrop-blur-md transition-colors hover:text-[#fafafa]"
       >
         Reset view
       </button>
 
-      <div
-        className="pointer-events-none absolute bottom-1 right-1 z-10 max-w-[65%] text-right text-[9px] leading-tight text-slate-400/80"
-        dangerouslySetInnerHTML={{ __html: site.mapAttribution }}
-      />
+      <div className="pointer-events-none absolute bottom-1 right-1 z-10 max-w-[65%] text-right text-[9px] leading-tight text-slate-400/80">
+        {site.mapAttribution}
+      </div>
 
       <style>{`
         @keyframes pulse-ring {

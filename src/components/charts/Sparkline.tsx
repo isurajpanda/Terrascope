@@ -38,7 +38,7 @@ export default function Sparkline({
     .join(' ');
 
   return (
-    <svg width={width} height={height} className="block" aria-hidden="true">
+    <svg viewBox={`0 0 ${width} ${height}`} className="block h-auto w-full" aria-hidden="true" preserveAspectRatio="none">
       <polyline
         points={points}
         fill="none"

@@ -10,7 +10,10 @@ export interface TemplateSlots {
 export function renderTemplate(template: string, slots: TemplateSlots): string {
   let out = template;
   for (const [k, v] of Object.entries(slots)) {
-    if (v === undefined || v === null) continue;
+    if (v === undefined || v === null) {
+      out = out.replaceAll(`{${k}}`, 'N/A');
+      continue;
+    }
     out = out.replaceAll(`{${k}}`, String(v));
   }
   return out;

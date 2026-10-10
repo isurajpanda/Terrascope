@@ -40,6 +40,8 @@ export default function LayerRail() {
         <button
           onClick={() => setCollapsed(!collapsed)}
           className="flex w-full items-center justify-between px-3 py-2"
+          aria-label={collapsed ? 'Expand layers panel' : 'Collapse layers panel'}
+          aria-pressed={collapsed}
         >
           <span className="hud-label">Layers</span>
           {collapsed ? <ChevronDown size={14} className="text-muted-foreground" /> : <ChevronUp size={14} className="text-muted-foreground" />}

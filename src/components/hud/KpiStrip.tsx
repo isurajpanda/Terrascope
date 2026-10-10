@@ -47,6 +47,8 @@ export default function KpiStrip() {
         <button
           onClick={() => setCollapsed(!collapsed)}
           className="flex w-full items-center justify-between px-3 py-2"
+          aria-label={collapsed ? 'Expand KPI panel' : 'Collapse KPI panel'}
+          aria-pressed={collapsed}
         >
           <span className="hud-label">KPIs</span>
           {collapsed ? <ChevronDown size={14} className="text-muted-foreground" /> : <ChevronUp size={14} className="text-muted-foreground" />}

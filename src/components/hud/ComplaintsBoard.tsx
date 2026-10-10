@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { X, ThumbsUp, MapPin, Zap, UserCheck, Play, CheckCheck, ClipboardList } from 'lucide-react';
 import { getSite } from '@/config/sites';
 import { useSettingsStore } from '@/store/useSettingsStore';
@@ -83,6 +83,43 @@ export default function ComplaintsBoard({
   const upvote = useReportStore((s) => s.upvote);
   const site = getSite(siteId);
   const [filter, setFilter] = useState<Filter>('all');
+  const dialogRef = useRef<HTMLDivElement>(null);
+  const previousFocusRef = useRef<HTMLElement | null>(null);
+
+  useEffect(() => {
+    if (!open) return;
+    previousFocusRef.current = document.activeElement as HTMLElement;
+    const dialog = dialogRef.current;
+    if (dialog) {
+      const focusable = dialog.querySelector<HTMLElement>('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])');
+      focusable?.focus();
+    }
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        e.stopPropagation();
+        onClose();
+        return;
+      }
+      if (e.key === 'Tab' && dialog) {
+        const focusableElements = dialog.querySelectorAll<HTMLElement>('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])');
+        if (focusableElements.length === 0) return;
+        const first = focusableElements[0];
+        const last = focusableElements[focusableElements.length - 1];
+        if (e.shiftKey && document.activeElement === first) {
+          e.preventDefault();
+          last.focus();
+        } else if (!e.shiftKey && document.activeElement === last) {
+          e.preventDefault();
+          first.focus();
+        }
+      }
+    };
+    document.addEventListener('keydown', onKey, true);
+    return () => {
+      document.removeEventListener('keydown', onKey, true);
+      previousFocusRef.current?.focus();
+    };
+  }, [open, onClose]);
 
   const prettyName = (r: Report) => site.buildings.find((b) => b.id === r.buildingId)?.shortName ?? r.buildingName;
 
@@ -106,7 +143,7 @@ export default function ComplaintsBoard({
   if (!open) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-end justify-end p-2 sm:p-3" role="dialog" aria-modal="true" aria-label="Complaints board">
+    <div ref={dialogRef} className="fixed inset-0 z-50 flex items-end justify-end p-2 sm:p-3" role="dialog" aria-modal="true" aria-label="Complaints board">
       <div className="absolute inset-0 bg-black/50 backdrop-blur-xs" onClick={onClose} />
       <div className="relative z-10 flex h-[82vh] w-full max-w-md flex-col rounded-lg border border-[#1a1a1a] bg-[#0a0a0a]/97 shadow-2xl backdrop-blur-xl">
         <div className="flex items-center gap-2 border-b border-border p-3">
@@ -138,6 +175,7 @@ export default function ComplaintsBoard({
             <button
               key={f.key}
               onClick={() => setFilter(f.key)}
+              aria-pressed={filter === f.key}
               className={cn(
                 'rounded px-2.5 py-1 font-hud text-[10px] font-bold uppercase tracking-wider transition-colors',
                 filter === f.key ? 'bg-[#1a1a1a] text-[#fafafa]' : 'text-[#8a8a8a] hover:text-[#fafafa]',

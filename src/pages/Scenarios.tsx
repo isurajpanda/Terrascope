@@ -218,7 +218,7 @@ export default function ScenariosPage() {
         <div className="mx-auto max-w-6xl space-y-4 p-4">
           <section aria-label="Scenario presets">
             <h2 className="hud-label mb-2">Presets</h2>
-            <div className="grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-5">
+            <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-5">
               {SCENARIO_PRESETS.map((preset) => {
                 const Icon = PRESET_ICONS[preset.icon] ?? FlaskConical;
                 const active = preset.id === activePresetId;
@@ -290,7 +290,7 @@ export default function ScenariosPage() {
                     <Play size={12} />
                     Run custom scenario
                   </Button>
-                  <Button variant="outline" onClick={reset} aria-label="Reset to live baseline">
+                  <Button variant="outline" onClick={reset} disabled={!scenario} aria-label="Reset to live baseline">
                     <RotateCcw size={12} />
                     Reset to live
                   </Button>

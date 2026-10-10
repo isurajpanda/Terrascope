@@ -43,7 +43,7 @@ export default function ForecastChart({ history, forecast, height = 200 }: Forec
     return (
       <div
         className="flex items-center justify-center text-sm text-slate-500"
-        style={{ height }}
+        style={{ height: `${height}px` }}
       >
         No data available
       </div>

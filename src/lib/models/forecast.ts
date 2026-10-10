@@ -100,7 +100,7 @@ export function seasonalNaive(
   const steps = Math.round((horizonHours * 60) / SIM_MINUTES_PER_TICK);
   const points: ForecastPoint[] = [];
   for (let h = 1; h <= steps; h++) {
-    const ref = series[n - 1 - ((h - 1) % SEASON)];
+    const ref = series[n - 1 - (((h - 1) % SEASON) + SEASON) % Math.max(1, n)] ?? series[0];
     const value = ref?.value ?? 0;
     points.push({ t: lastT + h * SIM_MINUTES_PER_TICK * MIN, value, lower: value * 0.85, upper: value * 1.15 });
   }

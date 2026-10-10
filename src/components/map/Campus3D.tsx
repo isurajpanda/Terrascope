@@ -134,7 +134,7 @@ function CameraRig({ target, pos, animKey }: { target: [number, number, number];
   return null;
 }
 
-function BuildingMesh({
+const BuildingMesh = memo(function BuildingMesh({
   b,
   center,
   status,
@@ -247,7 +247,7 @@ function BuildingMesh({
         </group>
       )}
       {!hidden && (
-        <Html position={[frame.cx, h + 14, frame.cz]} center distanceFactor={500} zIndexRange={[5, 0]} style={{ pointerEvents: 'none' }}>
+        <Html position={[frame.cx, h + 14, frame.cz]} center distanceFactor={500} zIndexRange={[35, 0]} style={{ pointerEvents: 'none' }}>
           <div
             className="rounded border border-[#1a1a1a] bg-black/70 px-1.5 py-0.5 text-center font-hud text-[9px] font-bold uppercase tracking-wider whitespace-nowrap"
             style={{ color: STATUS_COLOR[status] }}
@@ -258,7 +258,7 @@ function BuildingMesh({
       )}
     </group>
   );
-}
+});
 
 function RoadSegment({ a, x2, z2, color, width }: { a: { x: number; z: number }; x2: number; z2: number; color: string; width: number }) {
   const len = Math.hypot(x2 - a.x, z2 - a.z);
@@ -403,9 +403,13 @@ interface Campus3DProps {
   focusBuildingId: string | null;
   focusTrigger: number;
   autoOrbit: boolean;
+  entered: boolean;
+  onEnteredChange: (v: boolean) => void;
+  selectedRoomId: string | null;
+  onRoomSelect: (id: string | null) => void;
 }
 
-function Campus3D({ onBuildingClick, focusBuildingId, focusTrigger, autoOrbit }: Campus3DProps) {
+function Campus3D({ onBuildingClick, focusBuildingId, focusTrigger, autoOrbit, entered, onEnteredChange, selectedRoomId, onRoomSelect }: Campus3DProps) {
   const siteId = useSettingsStore((s) => s.siteId);
   const layers = useSettingsStore((s) => s.layers);
   const site = getSite(siteId);
@@ -416,15 +420,13 @@ function Campus3D({ onBuildingClick, focusBuildingId, focusTrigger, autoOrbit }:
   const reports = useReportStore((s) => s.reports);
 
   const [selectedId, setSelectedId] = useState<string | null>(null);
-  const [entered, setEntered] = useState(false);
-  const [roomId, setRoomId] = useState<string | null>(null);
 
   useEffect(() => {
     if (!focusBuildingId) return;
     if (site.buildings.some((b) => b.id === focusBuildingId)) {
       setSelectedId(focusBuildingId);
-      setEntered(false);
-      setRoomId(null);
+      onEnteredChange(false);
+      onRoomSelect(null);
     }
   }, [focusTrigger]);
 
@@ -444,15 +446,6 @@ function Campus3D({ onBuildingClick, focusBuildingId, focusTrigger, autoOrbit }:
     const ctx = liveFor(selected);
     return buildInterior(selected, ctx);
   }, [selected?.id, alerts, history, binStates]);
-
-  const selectedRoom = useMemo(() => {
-    if (!roomId) return null;
-    for (const f of floors) {
-      const r = f.rooms.find((x) => x.id === roomId);
-      if (r) return r;
-    }
-    return null;
-  }, [floors, roomId]);
 
   const selCenter = selected ? centroidMeters(site.center, selected.polygon) : { x: 0, z: 0 };
   const selH = selected ? Math.max(3, selected.height) : 0;
@@ -482,17 +475,15 @@ function Campus3D({ onBuildingClick, focusBuildingId, focusTrigger, autoOrbit }:
 
   const select = (id: string) => {
     setSelectedId(id);
-    setEntered(false);
-    setRoomId(null);
+    onEnteredChange(false);
+    onRoomSelect(null);
     onBuildingClick(id);
   };
   const deselect = () => {
     setSelectedId(null);
-    setEntered(false);
-    setRoomId(null);
+    onEnteredChange(false);
+    onRoomSelect(null);
   };
-
-  const dot = (s: string) => (s === 'critical' ? 'bg-crit' : s === 'warning' ? 'bg-warn' : 'bg-ok');
 
   return (
     <div className="relative h-full w-full bg-black">
@@ -641,14 +632,14 @@ function Campus3D({ onBuildingClick, focusBuildingId, focusTrigger, autoOrbit }:
             b={selected}
             center={site.center}
             floors={floors}
-            roomId={roomId}
-            onRoom={(id) => setRoomId((cur) => (cur === id ? null : id))}
+            roomId={selectedRoomId}
+            onRoom={(id) => onRoomSelect(selectedRoomId === id ? null : id)}
           />
         )}
 
         {alerts
           .filter((a) => a.severity !== 'ok')
-          .slice(0, 12)
+          .slice(0, 3)
           .map((a) => {
             const b = site.buildings.find((x) => x.id === a.buildingId);
             if (!b) return null;
@@ -682,107 +673,6 @@ function Campus3D({ onBuildingClick, focusBuildingId, focusTrigger, autoOrbit }:
         <div className="pointer-events-none absolute left-1/2 top-3 z-10 -translate-x-1/2">
           <div className="rounded-full border border-[#1a1a1a] bg-[#0a0a0a]/85 px-3 py-1 font-hud text-[10px] uppercase tracking-wider text-[#8a8a8a] backdrop-blur">
             Drag to orbit · scroll to zoom · click a building to enter
-          </div>
-        </div>
-      )}
-
-      {selected && (
-        <div className="absolute bottom-24 left-3 top-24 z-30 flex w-[19rem] flex-col overflow-hidden rounded border border-[#1a1a1a] bg-[#050506]/95 backdrop-blur">
-          <div className="border-b border-[#1a1a1a] p-2.5">
-            <div className="flex items-center gap-2 text-[10px] uppercase tracking-wider text-[#8a8a8a]">
-              <span>Campus</span>
-              <span>/</span>
-              <span className="text-[#fafafa]">{selected.shortName}</span>
-              <span className={`ml-auto inline-block h-2 w-2 rounded-full ${dot(worstSeverity(alerts, selected.id))}`} />
-            </div>
-            <h2 className="mt-1 font-display text-sm font-bold text-[#fafafa]">{selected.name}</h2>
-            <div className="mt-1 flex gap-2 text-[10px] text-[#8a8a8a]">
-              <span>{Math.round(liveFor(selected).occupancy)} people</span>
-              <span>PM2.5 {Math.round(liveFor(selected).pm25)}</span>
-              <span>{Math.round(liveFor(selected).energyKw)} kW</span>
-            </div>
-            <div className="mt-2 flex gap-1.5">
-              {!entered ? (
-                <button
-                  onClick={() => {
-                    setEntered(true);
-                    setRoomId(null);
-                  }}
-                  className="flex-1 rounded bg-[#00E5C3] px-2 py-1 font-hud text-[10px] font-bold uppercase tracking-wider text-black hover:brightness-110"
-                >
-                  Enter building
-                </button>
-              ) : (
-                <button
-                  onClick={() => {
-                    setEntered(false);
-                    setRoomId(null);
-                  }}
-                  className="flex-1 rounded border border-[#2a2a2a] px-2 py-1 font-hud text-[10px] font-bold uppercase tracking-wider text-[#fafafa] hover:bg-[#1a1a1a]"
-                >
-                  Exit to campus
-                </button>
-              )}
-              <button
-                onClick={deselect}
-                className="rounded border border-[#2a2a2a] px-2 py-1 font-hud text-[10px] uppercase tracking-wider text-[#8a8a8a] hover:text-[#fafafa]"
-              >
-                ✕
-              </button>
-            </div>
-          </div>
-
-          <div className="flex-1 overflow-y-auto p-2.5">
-            {!entered && (
-              <p className="text-[11px] leading-snug text-[#8a8a8a]">
-                {floors.reduce((a, f) => a + f.rooms.length, 0)} rooms across {floors.length}{' '}
-                {floors.length === 1 ? 'level' : 'levels'}. Enter to walk the floors and inspect every room element.
-              </p>
-            )}
-            {entered &&
-              floors.map((f) => (
-                <div key={f.floor} className="mb-2">
-                  <div className="mb-1 font-hud text-[10px] font-bold uppercase tracking-wider text-[#8a8a8a]">
-                    {f.label}
-                  </div>
-                  <div className="grid grid-cols-2 gap-1">
-                    {f.rooms.map((r) => (
-                      <button
-                        key={r.id}
-                        onClick={() => setRoomId((cur) => (cur === r.id ? null : r.id))}
-                        className={`rounded border px-1.5 py-1 text-left ${
-                          roomId === r.id ? 'border-[#00E5C3]' : 'border-[#1a1a1a]'
-                        } bg-[#0a0a0a] hover:border-[#3a3a3a]`}
-                      >
-                        <div className="flex items-center gap-1">
-                          <span className={`inline-block h-1.5 w-1.5 rounded-full ${dot(r.status)}`} />
-                          <span className="truncate text-[10px] font-semibold text-[#fafafa]">{r.name}</span>
-                        </div>
-                        <div className="mt-0.5 text-[9px] text-[#8a8a8a]">
-                          {r.occupancy}/{r.capacity} · {r.tempC.toFixed(1)}°C
-                        </div>
-                      </button>
-                    ))}
-                  </div>
-                </div>
-              ))}
-            {entered && selectedRoom && (
-              <div className="mt-1 rounded border border-[#00E5C3]/40 bg-[#00E5C3]/5 p-2">
-                <div className="mb-1.5 flex items-center gap-1.5">
-                  <span className={`inline-block h-2 w-2 rounded-full ${dot(selectedRoom.status)}`} />
-                  <span className="text-[11px] font-bold text-[#fafafa]">{selectedRoom.name}</span>
-                </div>
-                <div className="space-y-1">
-                  {selectedRoom.elements.map((e) => (
-                    <div key={e.id} className="flex items-center gap-1.5 text-[10px]">
-                      <span className={`inline-block h-1.5 w-1.5 rounded-full ${dot(e.status)}`} />
-                      <span className="text-[#8a8a8a]">{e.label}</span>
-                      <span className="ml-auto text-right text-[#fafafa]">{e.value}</span>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
           </div>
         </div>
       )}

@@ -29,6 +29,8 @@ export default function ActionCentre({ onFocusBuilding }: { onFocusBuilding: (id
         <button
           onClick={() => setCollapsed(!collapsed)}
           className="flex w-full items-center justify-between px-3 py-2"
+          aria-label={collapsed ? 'Expand actions panel' : 'Collapse actions panel'}
+          aria-pressed={collapsed}
         >
           <span className="flex items-center gap-1.5">
             <Sparkles size={12} className="text-data" />

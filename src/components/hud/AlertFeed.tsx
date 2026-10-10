@@ -30,6 +30,8 @@ export default function AlertFeed({ onAlertClick }: { onAlertClick: (buildingId:
         <button
           onClick={() => setCollapsed(!collapsed)}
           className="flex w-full items-center justify-between px-3 py-2"
+          aria-label={collapsed ? 'Expand alerts panel' : 'Collapse alerts panel'}
+          aria-pressed={collapsed}
         >
           <span className="flex items-center gap-2">
             <span className="hud-label">Alerts</span>

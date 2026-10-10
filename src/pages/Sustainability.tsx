@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Download, Info, Leaf, Droplets, Sun, ShieldAlert } from 'lucide-react';
+import { ArrowLeft, Download, Info, Leaf, Droplets, Sun, ShieldAlert } from 'lucide-react';
 import { getSite } from '@/config/sites';
 import { useSimStore } from '@/store/useSimStore';
 import { useSettingsStore } from '@/store/useSettingsStore';
@@ -104,6 +104,12 @@ export default function SustainabilityPage() {
     <div className="h-full overflow-y-auto bg-[#000000] p-4 md:p-6">
       <div className="mx-auto max-w-6xl">
         <div className="mb-4 flex flex-wrap items-center gap-3">
+          <Button variant="ghost" size="sm" className="gap-1" asChild>
+            <Link to="/">
+              <ArrowLeft size={12} />
+              Back
+            </Link>
+          </Button>
           <div>
             <h1 className="font-display text-xl font-bold tracking-wider text-[#fafafa]">Sustainability Scorecard</h1>
             <p className="text-xs text-muted-foreground">

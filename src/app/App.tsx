@@ -2,10 +2,11 @@ import { useEffect, useState } from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import { Toaster } from '@/components/ui/sonner';
 import { useSettingsStore } from '@/store/useSettingsStore';
-import { useSimStore } from '@/store/useSimStore';
 import { enableRemoteLLM } from '@/lib/reco/llmProvider';
 
 enableRemoteLLM();
+import { useSimStore } from '@/store/useSimStore';
+
 import CommandPage from '@/pages/Command';
 import OpsPage from '@/pages/Ops';
 import SustainabilityPage from '@/pages/Sustainability';

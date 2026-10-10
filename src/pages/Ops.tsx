@@ -159,12 +159,12 @@ export default function OpsPage() {
             <Activity size={11} />
             {role}
           </Badge>
-          <Link to="/" className="focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded-md">
-            <Button variant="outline" size="sm" className="gap-1.5">
+          <Button variant="outline" size="sm" className="gap-1.5" asChild>
+            <Link to="/">
               <MapPin size={12} />
               Back to HUD
-            </Button>
-          </Link>
+            </Link>
+          </Button>
         </div>
       </header>
 
@@ -285,6 +285,7 @@ export default function OpsPage() {
             <span className="text-[11px] text-muted-foreground">{reports.length} reports</span>
           </div>
           <ScrollArea className="max-h-[340px]">
+            <div className="overflow-x-auto">
             <Table>
               <TableHeader>
                 <TableRow>
@@ -331,6 +332,7 @@ export default function OpsPage() {
                 ))}
               </TableBody>
             </Table>
+            </div>
           </ScrollArea>
         </section>
 

@@ -97,8 +97,9 @@ export default function TimeScrubber() {
       )}
       <button
         onClick={() => setCollapsed(true)}
-        className="rounded p-1 text-[#8a8a8a] hover:text-[#fafafa]"
+        className="rounded p-2 text-[#8a8a8a] hover:text-[#fafafa]"
         aria-label="Collapse time scrubber"
+        aria-pressed={collapsed}
       >
         <ChevronDown size={14} />
       </button>

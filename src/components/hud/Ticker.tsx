@@ -21,6 +21,8 @@ export default function Ticker() {
       <div className="pointer-events-auto hud-panel">
         <button
           onClick={() => setCollapsed(false)}
+          aria-label="Expand ticker"
+          aria-pressed={collapsed}
           className="flex w-full items-center gap-2 px-3 py-1.5"
         >
           <span className="h-1.5 w-1.5 animate-blink rounded-full bg-ok" />
@@ -35,6 +37,8 @@ export default function Ticker() {
     <div className="pointer-events-auto hud-panel flex h-8 items-center overflow-hidden" aria-label="Event ticker">
       <button
         onClick={() => setCollapsed(true)}
+        aria-label="Collapse ticker"
+        aria-pressed={collapsed}
         className="z-10 flex h-full shrink-0 items-center gap-1.5 border-r border-[#1a1a1a] bg-[#0a0a0a] px-3"
       >
         <span className="h-1.5 w-1.5 animate-blink rounded-full bg-ok" />

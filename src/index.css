@@ -142,7 +142,11 @@
   .animate-pulse-ring,
   .animate-blink,
   .animate-radar-sweep,
-  .animate-ticker {
+  .animate-ticker,
+  .animate-pulse,
+  .animate-ping,
+  .animate-spin,
+  .animate-fade-in {
     animation: none !important;
   }
 }

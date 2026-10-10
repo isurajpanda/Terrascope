@@ -242,15 +242,14 @@ export const useSimStore = create<SimState>()((set, get) => ({
             ? site.thresholds.pm25Critical
             : site.thresholds.pm25Warning
           : site.thresholds.energyZScore;
-        const fired =
-          isPm ? v > site.thresholds.pm25Warning : result.isAnomaly;
+        const fired = isPm ? v > site.thresholds.pm25Warning : result.isAnomaly;
         if (fired && shouldFire(lastAlertTimes, k, newTime, 2 * 60 * MIN)) {
           const severity = isPm
             ? v > site.thresholds.pm25Critical
               ? 'critical'
               : 'warning'
-            : result.zScore > 0
-              ? 'warning'
+            : result.zScore > site.thresholds.energyZScore * 1.5
+              ? 'critical'
               : 'warning';
           const alert: Alert = {
             id: `al-${newTime}-${k}`,
@@ -283,7 +282,7 @@ export const useSimStore = create<SimState>()((set, get) => ({
     const congestion = { ...state.congestion };
     const h = new Date(newTime).getHours() + new Date(newTime).getMinutes() / 60;
     for (const r of site.roads) {
-      const seedOffset = r.id.split('').reduce((a, c) => a + c.charCodeAt(0), 0) % 5;
+      const seedOffset = ((r.id.split('').reduce((a, c) => a + c.charCodeAt(0), 0) + seed) % 5);
       const base =
         h >= 8 && h < 10 ? 0.75 : h >= 12 && h < 14 ? 0.55 : h >= 17 && h < 19 ? 0.8 : h >= 21 && h < 23 ? 0.4 : 0.25;
       let v = (base + seedOffset * 0.07) * params.congestionMultiplier;
@@ -543,7 +542,7 @@ export const useSimStore = create<SimState>()((set, get) => ({
   },
 
   logAudit: (actor, action, detail) => {
-    const entry: AuditEntry = { id: `au-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`, t: Date.now(), actor, action, detail };
+    const entry: AuditEntry = { id: `au-${Date.now()}-${(get().audit.length + 1).toString(36)}`, t: Date.now(), actor, action, detail };
     set((s) => ({ audit: [entry, ...s.audit].slice(0, 100) }));
   },
 }));
@@ -564,7 +563,7 @@ function runEnginePass(set: Set, get: Get) {
   });
 
   const energyAnomalyBuildings = state.alerts
-    .filter((a) => a.sensorLabel === 'Energy' && Date.now() - a.t < 6 * 3600000)
+    .filter((a) => a.sensorLabel === 'Energy' && state.simTime - a.t < 6 * 3600000)
     .map((a) => a.buildingId);
   const waterLeakBuildings = site.buildings
     .filter((b) => {

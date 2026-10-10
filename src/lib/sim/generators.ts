@@ -168,7 +168,7 @@ export function genOccupancy(b: Building, t: number, p: ScenarioParams, seed: nu
   }
   frac *= p.occupancyMultiplier * p.crowdMultiplier;
   const surge = spikeActive(seed, `occ-${b.id}`, t, h, 0.25);
-  frac = clamp(frac + surge, 0, 1.15);
+  frac = clamp(frac + surge, 0, 1.0);
   return Math.round(cap * frac);
 }
 
@@ -277,10 +277,6 @@ export function genBiomed(b: Building, t: number, _p: ScenarioParams, seed: numb
   }
   const rate = h >= 8 && h < 20 ? 2.4 : 0.7;
   return clamp(prev + rate * (SIM_MINUTES_PER_TICK / 60) + noise(seed, `biomed-${b.id}`, t) * 0.3, 0, 100);
-}
-
-export function genFlow(b: Building, t: number, _p: ScenarioParams, seed: number): number {
-  return genWater(b, t, _p, seed);
 }
 
 type GeneratorFn = (b: Building, t: number, p: ScenarioParams, seed: number, prev: number) => number;

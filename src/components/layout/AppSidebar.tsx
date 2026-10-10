@@ -27,7 +27,7 @@ import {
 import { useSettingsStore } from '@/store/useSettingsStore';
 import { useSimStore } from '@/store/useSimStore';
 import { useReportStore } from '@/store/useReportStore';
-import { getSite, SITES } from '@/config/sites';
+import { getSite } from '@/config/sites';
 import { formatSimTime } from '@/lib/sim/clock';
 import { cn } from '@/lib/utils';
 import { Tooltip } from '@/components/ui/tooltip';
@@ -157,6 +157,8 @@ export default function AppSidebar({ onOpenChat, onToggleScrubber, isScrubberOpe
   const handleNavClick = () => {
     if (mobileSidebarOpen) {
       setMobileSidebarOpen(false);
+      const menuButton = document.querySelector<HTMLElement>('[aria-label="Open navigation menu"]');
+      menuButton?.focus();
     }
   };
 
@@ -232,17 +234,15 @@ export default function AppSidebar({ onOpenChat, onToggleScrubber, isScrubberOpe
               ONLINE
             </span>
           </div>
-          {SITES.length > 1 && (
-            <div className="mt-1.5">
-              <Select
-                ariaLabel="Switch campus site"
-                value={siteId}
-                onValueChange={setSiteId}
-                options={SITES.map((s) => ({ value: s.id, label: s.name }))}
-                className="h-7 w-full text-[11px]"
-              />
-            </div>
-          )}
+          <div className="mt-1.5">
+            <Select
+              ariaLabel="Switch campus site"
+              value={siteId}
+              onValueChange={setSiteId}
+              options={[{ value: site.id, label: site.name }]}
+              className="h-7 w-full text-[11px]"
+            />
+          </div>
         </div>
       )}
 
@@ -286,6 +286,7 @@ export default function AppSidebar({ onOpenChat, onToggleScrubber, isScrubberOpe
                 <NavLink
                   to={item.path}
                   onClick={handleNavClick}
+                  aria-current={isActive ? 'page' : undefined}
                   className={cn(
                     'group flex items-center rounded-md text-xs font-medium transition-all focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring',
                     isCompact ? 'h-10 w-10 justify-center mx-auto' : 'h-9 px-2.5 gap-2.5',
@@ -480,8 +481,9 @@ export default function AppSidebar({ onOpenChat, onToggleScrubber, isScrubberOpe
                   <button
                     key={s}
                     onClick={() => setSpeed(s)}
+                    aria-label={`Set simulation speed to ${s}x`}
                     className={cn(
-                      'rounded px-1.5 py-0.5 font-mono text-[10px] font-semibold transition-colors',
+                      'rounded px-2 py-1.5 font-mono text-[10px] font-semibold transition-colors min-h-[32px]',
                       speed === s ? 'bg-data text-white' : 'text-[#8a8a8a] hover:text-[#fafafa]',
                     )}
                   >

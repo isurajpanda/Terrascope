@@ -20,6 +20,43 @@ export default function ChatPanel({ open, onClose }: { open: boolean; onClose: (
   const [loading, setLoading] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
   const abortRef = useRef(false);
+  const dialogRef = useRef<HTMLDivElement>(null);
+  const previousFocusRef = useRef<HTMLElement | null>(null);
+
+  useEffect(() => {
+    if (!open) return;
+    previousFocusRef.current = document.activeElement as HTMLElement;
+    const dialog = dialogRef.current;
+    if (dialog) {
+      const focusable = dialog.querySelector<HTMLElement>('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])');
+      focusable?.focus();
+    }
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        e.stopPropagation();
+        onClose();
+        return;
+      }
+      if (e.key === 'Tab' && dialog) {
+        const focusableElements = dialog.querySelectorAll<HTMLElement>('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])');
+        if (focusableElements.length === 0) return;
+        const first = focusableElements[0];
+        const last = focusableElements[focusableElements.length - 1];
+        if (e.shiftKey && document.activeElement === first) {
+          e.preventDefault();
+          last.focus();
+        } else if (!e.shiftKey && document.activeElement === last) {
+          e.preventDefault();
+          first.focus();
+        }
+      }
+    };
+    document.addEventListener('keydown', onKey, true);
+    return () => {
+      document.removeEventListener('keydown', onKey, true);
+      previousFocusRef.current?.focus();
+    };
+  }, [open, onClose]);
 
   useEffect(() => {
     if (open && messages.length === 0) {
@@ -52,19 +89,36 @@ export default function ChatPanel({ open, onClose }: { open: boolean; onClose: (
     try {
       const provider = getLLMProvider();
       const context = buildLLMContext(siteId);
-      const history = messages
+      const history = [...messages, userMsg]
         .filter((m) => !m.streaming)
         .slice(-8)
-        .map((m) => ({ role: m.role, content: m.content }));
+        .map((m) => ({ role: m.role as string, content: m.content }));
       const prompt = `Conversation so far:\n${history.map((h) => `${h.role}: ${h.content}`).join('\n')}\n\nCurrent question: ${q}\n\nGive a concise, actionable answer based on the live site state below.`;
       const streamFn = provider.streamInsight;
       if (streamFn) {
+        let chunkBuffer = '';
+        let rafId = 0;
         await streamFn.call(provider, prompt, context, (chunk) => {
           if (abortRef.current) return;
-          setMessages((prev) =>
-            prev.map((m) => (m.id === assistantId ? { ...m, content: m.content + chunk } : m)),
-          );
+          chunkBuffer += chunk;
+          if (!rafId) {
+            rafId = requestAnimationFrame(() => {
+              rafId = 0;
+              const text = chunkBuffer;
+              chunkBuffer = '';
+              setMessages((prev) =>
+                prev.map((m) => (m.id === assistantId ? { ...m, content: m.content + text } : m)),
+              );
+            });
+          }
         });
+        if (chunkBuffer && !rafId) {
+          const text = chunkBuffer;
+          chunkBuffer = '';
+          setMessages((prev) =>
+            prev.map((m) => (m.id === assistantId ? { ...m, content: m.content + text } : m)),
+          );
+        }
       } else {
         const text = await provider.generateInsight(prompt, context);
         setMessages((prev) => prev.map((m) => (m.id === assistantId ? { ...m, content: text } : m)));
@@ -90,7 +144,7 @@ export default function ChatPanel({ open, onClose }: { open: boolean; onClose: (
   if (!open) return null;
 
   return (
-    <div className="fixed inset-0 z-[100] flex items-end justify-end p-2 sm:p-3" role="dialog" aria-modal="true" aria-label="Chat with Terrascope">
+    <div ref={dialogRef} className="fixed inset-0 z-[100] flex items-end justify-end p-2 sm:p-3" role="dialog" aria-modal="true" aria-label="Chat with Terrascope">
       <div className="absolute inset-0 bg-black/50 backdrop-blur-xs" onClick={onClose} />
       <div className="relative z-10 flex h-[75vh] sm:h-[70vh] w-full max-w-md flex-col rounded-lg border border-[#1a1a1a] bg-[#0a0a0a] shadow-2xl backdrop-blur-xl">
         <div className="flex items-center gap-2 border-b border-border p-3">
@@ -151,6 +205,7 @@ export default function ChatPanel({ open, onClose }: { open: boolean; onClose: (
               onKeyDown={(e) => e.key === 'Enter' && send()}
               placeholder="Ask about the site…"
               aria-label="Chat message"
+              aria-describedby="chat-disclaimer"
               className="h-9 flex-1 rounded-md border border-border bg-secondary px-3 text-sm text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
             />
             <button
@@ -162,7 +217,7 @@ export default function ChatPanel({ open, onClose }: { open: boolean; onClose: (
               {loading ? <Loader2 size={14} className="animate-spin" /> : <Send size={14} />}
             </button>
           </div>
-          <p className="mt-1.5 text-[9px] text-muted-foreground">
+          <p id="chat-disclaimer" className="mt-1.5 text-[9px] text-muted-foreground">
             Each message sends the full live state (KPIs, alerts, bins, recommendations) to the LLM.
           </p>
         </div>

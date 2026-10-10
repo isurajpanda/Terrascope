@@ -61,36 +61,30 @@ export function rollingZScore(
  * implementation — good enough to rank odd combinations of
  * (energy, occupancy, hour-of-day).
  */
-export function isolationScore(points: number[][], sampleSize = 32): number {
+export function isolationScore(points: number[][], sampleSize = 32, rand: () => number = Math.random): number {
   if (points.length < 8) return 0;
   const sample = points.slice(-sampleSize);
   const dims = points[0].length;
   const trees = 12;
   const maxDepth = 6;
 
-  function pathLength(point: number[], depth: number): number {
-    if (depth >= maxDepth || sample.length <= 1) return depth;
-    const dim = Math.floor(Math.random() * dims);
-    const values = sample.map((p) => p[dim]);
+  function pathLength(point: number[], data: number[][], depth: number): number {
+    if (depth >= maxDepth || data.length <= 1) return depth;
+    const dim = Math.floor(rand() * dims);
+    const values = data.map((p) => p[dim]);
     const min = Math.min(...values);
     const max = Math.max(...values);
     if (min === max) return depth;
-    const split = min + Math.random() * (max - min);
+    const split = min + rand() * (max - min);
     const goesLeft = point[dim] < split;
-    const next = sample.filter((p) => (p[dim] < split) === goesLeft);
+    const next = data.filter((p) => (p[dim] < split) === goesLeft);
     if (next.length <= 1) return depth;
-    const saved = sample.length;
-    sample.length = 0;
-    sample.push(...next);
-    const result = pathLength(point, depth + 1);
-    sample.length = saved;
-    sample.push(...next);
-    return result;
+    return pathLength(point, next, depth + 1);
   }
 
   const target = points[points.length - 1];
   let total = 0;
-  for (let i = 0; i < trees; i++) total += pathLength(target, 0);
+  for (let i = 0; i < trees; i++) total += pathLength(target, sample, 0);
   const avgPath = total / trees;
   const n = sample.length;
   const c = 2 * (Math.log(n - 1) + 0.5772156649) - (2 * (n - 1)) / n;

@@ -25,7 +25,7 @@ function seedReports(): Report[] {
     t: now - hrsAgo * H,
     category,
     buildingId,
-    buildingName: buildingId,
+    buildingName: buildingId.replace(/-/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase()),
     note,
     hasPhoto: i % 3 === 0,
     status,

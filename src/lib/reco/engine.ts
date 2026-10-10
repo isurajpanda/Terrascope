@@ -101,8 +101,9 @@ export function runEngine(input: EngineInput, _llm?: LLMProvider): Recommendatio
   // 2. Air-quality advisory to hostels when PM2.5 is elevated.
   const pmAlerts = alerts.filter((a) => a.sensorLabel === 'PM2.5' && a.severity !== 'ok');
   if ((avgPm25 > site.thresholds.pm25Warning || pmAlerts.length > 0) && hour >= 6 && hour <= 22) {
-    const hostels = site.buildings.filter((b) => b.type === 'hostel' || b.type === 'ward');
-    const advisory = `Air quality on campus is currently in the "${pmCategory(avgPm25)}" band (PM2.5 ≈ ${Math.round(avgPm25)} µg/m³, indicative low-cost sensor reading). Hostel residents: keep windows closed during peak hours, avoid outdoor exercise until levels fall, and report any breathing discomfort to the warden.`;
+    const hostels = site.buildings.filter((b) => b.type === 'hostel');
+    const wards = site.buildings.filter((b) => b.type === 'ward');
+    const advisory = `Air quality on campus is currently in the "${pmCategory(avgPm25)}" band (PM2.5 ≈ ${Math.round(avgPm25)} µg/m³, indicative low-cost sensor reading). ${hostels.length > 0 ? 'Hostel residents: keep windows closed during peak hours, avoid outdoor exercise until levels fall, and report any breathing discomfort to the warden.' : ''}${wards.length > 0 ? ' Ward patients: ensure ventilation systems are operating and monitor respiratory symptoms.' : ''}`.trim();
     recs.push({
       id: rid(),
       t,

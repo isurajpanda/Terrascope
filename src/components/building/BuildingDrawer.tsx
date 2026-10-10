@@ -25,8 +25,8 @@ const SENSOR_CHART_DEFS: Record<string, { label: string; color: string }> = {
   co2: { label: 'CO₂', color: '#94A3B8' },
 };
 
-function statusOf(buildingId: string, alerts: { buildingId: string; severity: string }[]): 'ok' | 'warning' | 'critical' {
-  const bas = alerts.filter((a) => a.buildingId === buildingId);
+function statusOf(buildingId: string, alerts: { buildingId: string; severity: string; acknowledged?: boolean }[]): 'ok' | 'warning' | 'critical' {
+  const bas = alerts.filter((a) => a.buildingId === buildingId && !a.acknowledged);
   if (bas.some((a) => a.severity === 'critical')) return 'critical';
   if (bas.some((a) => a.severity === 'warning')) return 'warning';
   return 'ok';
@@ -136,7 +136,7 @@ function BuildingOverview({
 
   return (
     <div className="flex flex-col gap-3">
-      <div className="grid grid-cols-3 gap-2">
+      <div className="grid grid-cols-3 gap-2 sm:grid-cols-3">
         <div className="rounded border border-border bg-[#000000]/60 p-2">
           <div className="hud-label">Occupancy</div>
           <div className="font-display text-lg tabular-nums text-ok">{Math.round(occ)}</div>

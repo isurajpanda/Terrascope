@@ -20,7 +20,7 @@ import {
 } from 'lucide-react';
 import { useSettingsStore } from '@/store/useSettingsStore';
 import { useSimStore } from '@/store/useSimStore';
-import { SITES } from '@/config/sites';
+import { getSite } from '@/config/sites';
 import { formatSimTime } from '@/lib/sim/clock';
 import { Button } from '@/components/ui/button';
 import { Select } from '@/components/ui/select';
@@ -94,7 +94,7 @@ export default function TopBar({ onFocusBuilding, rightOpen, onToggleRight }: To
   const { siteId, setSiteId, role, setRole, sidebarCollapsed, toggleSidebar, toggleMobileSidebar } = useSettingsStore();
   const kpis = useSimStore((s) => s.kpis);
   const alerts = useSimStore((s) => s.alerts);
-  const site = SITES.find((s) => s.id === siteId) ?? SITES[0];
+  const site = getSite(siteId);
   const [kpiCollapsed, setKpiCollapsed] = useState(false);
   const [notifOpen, setNotifOpen] = useState(false);
   const [boardOpen, setBoardOpen] = useState(false);
@@ -171,7 +171,7 @@ export default function TopBar({ onFocusBuilding, rightOpen, onToggleRight }: To
         ariaLabel="Site"
         value={siteId}
         onValueChange={setSiteId}
-        options={SITES.map((s) => ({ value: s.id, label: s.shortName }))}
+        options={[{ value: site.id, label: site.shortName }]}
         className="h-8 w-28 sm:w-36 text-xs"
       />
 
@@ -202,9 +202,9 @@ export default function TopBar({ onFocusBuilding, rightOpen, onToggleRight }: To
         ))}
       </DropdownMenu>
 
-      <div className="hidden lg:block mx-1 h-6 w-px bg-[#1a1a1a]" />
+      <div className="hidden sm:block mx-1 h-6 w-px bg-[#1a1a1a]" />
 
-      <div className="hidden lg:flex items-center gap-1">
+      <div className="flex items-center gap-1">
         <button
           onClick={() => setKpiCollapsed(!kpiCollapsed)}
           className="flex h-7 items-center gap-1 rounded px-2 font-hud text-[10px] font-bold uppercase tracking-wider text-[#8a8a8a] hover:text-[#fafafa]"
@@ -213,7 +213,7 @@ export default function TopBar({ onFocusBuilding, rightOpen, onToggleRight }: To
           {kpiCollapsed ? <ChevronDown size={12} /> : <ChevronUp size={12} />}
         </button>
         {!kpiCollapsed && (
-          <div className="flex items-center gap-1 overflow-x-auto no-scrollbar max-w-[30vw]">
+          <div className="flex items-center gap-1 overflow-x-auto no-scrollbar max-w-[60vw] lg:max-w-[30vw]">
             {kpiItems.map(({ icon: Icon, label, value, suffix, color }) => (
               <div
                 key={label}

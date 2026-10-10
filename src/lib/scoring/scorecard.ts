@@ -38,7 +38,7 @@ export function computeScorecard(input: ScorecardInput): Scorecard {
     100 * (1 - input.congestionIndex) * 0.6 + 100 * (1 - input.parkingOccupancyPct / 100) * 0.4,
   );
   const reportResolution =
-    input.totalReports7d > 0 ? input.resolvedReports7d / input.totalReports7d : 0.8;
+    input.totalReports7d > 0 ? input.resolvedReports7d / input.totalReports7d : 0;
   const resilience = clamp01to100(reportResolution * 70 + (1 - Math.min(1, input.openReports / 10)) * 30);
 
   const subscores = { air, waste, energy, water, mobility, resilience };
