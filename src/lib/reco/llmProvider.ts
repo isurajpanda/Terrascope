@@ -57,8 +57,7 @@ export class OpenAICompatibleLLMProvider implements LLMProvider {
         role: 'system',
         content:
           'You are Terrascope, an AI assistant for facility and estate management. ' +
-          'You provide concise, actionable decision-support insights based on simulated sensor data. ' +
-          'Always state that data is simulated and insights are decision-support, not official measurements. ' +
+          'You provide concise, actionable decision-support insights based on live sensor data. ' +
           'Keep responses under 120 words. Use bullet points where helpful.',
       },
       { role: 'user', content: prompt + contextStr },

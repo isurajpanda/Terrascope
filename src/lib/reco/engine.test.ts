@@ -1,6 +1,8 @@
 import { describe, it, expect } from 'vitest';
 import { runEngine, type EngineInput } from './engine';
-import { campusSite } from '@/config/sites/campus';
+import { createCampusSite } from '@/config/sites/campus';
+
+const campusSite = createCampusSite({ lng: 0, lat: 0 });
 import type { Alert, BinEta, Report } from '@/types/domain';
 
 function baseInput(overrides: Partial<EngineInput> = {}): EngineInput {

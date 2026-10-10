@@ -1,6 +1,8 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
-import type { LayerKey, Role } from '@/types/domain';
+import type { LayerKey, LngLat, Role } from '@/types/domain';
+
+const NEW_YORK_CENTER: LngLat = { lng: -73.9857, lat: 40.7484 };
 
 interface SettingsState {
   role: Role;
@@ -13,6 +15,7 @@ interface SettingsState {
   weights: Record<string, number>;
   sidebarCollapsed: boolean;
   mobileSidebarOpen: boolean;
+  mapCenter: LngLat;
   setRole: (r: Role) => void;
   setSiteId: (id: string) => void;
   setDayNight: (d: 'day' | 'night') => void;
@@ -25,6 +28,7 @@ interface SettingsState {
   toggleSidebar: () => void;
   setMobileSidebarOpen: (o: boolean) => void;
   toggleMobileSidebar: () => void;
+  setMapCenter: (c: LngLat) => void;
 }
 
 export const useSettingsStore = create<SettingsState>()(
@@ -40,6 +44,7 @@ export const useSettingsStore = create<SettingsState>()(
       weights: { air: 0.2, waste: 0.15, energy: 0.2, water: 0.15, mobility: 0.15, resilience: 0.15 },
       sidebarCollapsed: false,
       mobileSidebarOpen: false,
+      mapCenter: NEW_YORK_CENTER,
       setRole: (role) => set({ role }),
       setSiteId: (siteId) => set({ siteId }),
       setDayNight: (dayNight) => set({ dayNight }),
@@ -52,6 +57,7 @@ export const useSettingsStore = create<SettingsState>()(
       toggleSidebar: () => set((s) => ({ sidebarCollapsed: !s.sidebarCollapsed })),
       setMobileSidebarOpen: (mobileSidebarOpen) => set({ mobileSidebarOpen }),
       toggleMobileSidebar: () => set((s) => ({ mobileSidebarOpen: !s.mobileSidebarOpen })),
+      setMapCenter: (mapCenter) => set({ mapCenter }),
     }),
     { name: 'terrascope-settings' },
   ),

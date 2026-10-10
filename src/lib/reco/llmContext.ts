@@ -23,6 +23,5 @@ export function buildLLMContext(siteId: string): Record<string, unknown> {
       .slice(0, 5)
       .map((r) => ({ title: r.title, severity: r.severity, confidence: r.confidence })),
     openReports: reports.filter((r) => r.status !== 'resolved').length,
-    note: 'All data is simulated. Provide decision-support insights only.',
   };
 }

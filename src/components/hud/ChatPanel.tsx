@@ -90,9 +90,9 @@ export default function ChatPanel({ open, onClose }: { open: boolean; onClose: (
   if (!open) return null;
 
   return (
-    <div className="fixed inset-0 z-60 flex items-end justify-end p-2 sm:p-3" role="dialog" aria-modal="true" aria-label="Chat with Terrascope">
+    <div className="fixed inset-0 z-[100] flex items-end justify-end p-2 sm:p-3" role="dialog" aria-modal="true" aria-label="Chat with Terrascope">
       <div className="absolute inset-0 bg-black/50 backdrop-blur-xs" onClick={onClose} />
-      <div className="relative z-10 flex h-[75vh] sm:h-[70vh] w-full max-w-md flex-col rounded-lg border border-[#1a1a1a] bg-[#0a0a0a]/97 shadow-2xl backdrop-blur-xl">
+      <div className="relative z-10 flex h-[75vh] sm:h-[70vh] w-full max-w-md flex-col rounded-lg border border-[#1a1a1a] bg-[#0a0a0a] shadow-2xl backdrop-blur-xl">
         <div className="flex items-center gap-2 border-b border-border p-3">
           <div className="flex h-7 w-7 items-center justify-center rounded border border-data/40 bg-data/10">
             <Bot size={14} className="text-data" />
@@ -102,7 +102,7 @@ export default function ChatPanel({ open, onClose }: { open: boolean; onClose: (
               Ask Terrascope
             </div>
             <div className="text-[10px] text-muted-foreground">
-              {getLLMProvider().name} · live sim context · simulated data
+              {getLLMProvider().name} · live context
             </div>
           </div>
           <button
@@ -163,7 +163,7 @@ export default function ChatPanel({ open, onClose }: { open: boolean; onClose: (
             </button>
           </div>
           <p className="mt-1.5 text-[9px] text-muted-foreground">
-            Each message sends the full live sim state (KPIs, alerts, bins, recommendations) to the LLM. Rules + forecasts + templates remain the backbone.
+            Each message sends the full live state (KPIs, alerts, bins, recommendations) to the LLM.
           </p>
         </div>
       </div>

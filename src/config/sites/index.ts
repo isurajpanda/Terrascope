@@ -1,8 +1,12 @@
 import type { SiteConfig } from '@/types/domain';
-import { campusSite } from './campus';
+import { createCampusSite } from './campus';
+import { useSettingsStore } from '@/store/useSettingsStore';
 
-export const SITES: SiteConfig[] = [campusSite];
+const DEFAULT_CENTER = { lng: 0, lat: 0 };
 
-export function getSite(id: string): SiteConfig {
-  return SITES.find((s) => s.id === id) ?? SITES[0];
+export const SITES: SiteConfig[] = [createCampusSite(DEFAULT_CENTER)];
+
+export function getSite(_id: string): SiteConfig {
+  const center = useSettingsStore.getState().mapCenter;
+  return createCampusSite(center);
 }
