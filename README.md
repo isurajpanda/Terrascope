@@ -1,10 +1,21 @@
-# Terrascope — Estate Intelligence Dashboard
+# Terrascope | Estate Intelligence Dashboard
 
 > **Cognizant Hackathon · Team Vintage · BH26PS04T004**  
 > **Demo site:** Greenfield Institute of Technology (fictional demo campus)  
 > ⚠️ **Demo note:** All telemetry is simulated by a client-side engine. Building footprints are illustrative rectangles. Outputs are **decision-support insights, not official measurements**.
 
 ---
+
+
+## System overview
+
+```mermaid
+flowchart LR
+  A[Simulated telemetry] --> B[In-browser analytics]
+  B --> C[Alerts and forecasts]
+  C --> D[Dashboard and operations]
+```
+
 
 ## Overview
 
